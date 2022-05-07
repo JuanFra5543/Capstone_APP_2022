@@ -4,7 +4,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   TextInput,
-  Dimensions,
   Image,
   Platform,
 } from "react-native";
@@ -12,11 +11,10 @@ import React from "react";
 // import tw from 'twrnc';
 import tw from "../helpers/tailwind";
 import { Icon } from "react-native-elements";
-import { useNavigation } from "@react-navigation/native";
 
 import { AuthContext } from "../components/context";
 
-const LogInScreen = () => {
+const LogInScreen = ({navigation}) => {
   const { signIn } = React.useContext(AuthContext);
   const [data, setData] = React.useState({
     email: "",
@@ -91,9 +89,15 @@ const LogInScreen = () => {
             logInHandle(data.email, data.password);
           }}
         >
-          <View style={tw`bg-stg rounded-2 w-32 p-2 shadow-xl`}>
+          <View style={tw`bg-stg rounded-lg w-32 p-2 shadow-xl`}>
             <Text style={tw`text-white text-center text-lg`}>Login</Text>
           </View>
+        </TouchableOpacity>
+      </View>
+      <View style={tw`px-8 items-center`}>
+        <Text>No tienes cuenta?</Text>
+        <TouchableOpacity onPress={() => {navigation.navigate('RegisterScreen')}} >
+            <Text style={tw`text-stg`}>Registrate Aqui</Text>
         </TouchableOpacity>
       </View>
     </View>

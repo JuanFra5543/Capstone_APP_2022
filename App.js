@@ -1,26 +1,32 @@
-import { Platform, KeyboardAvoidingView, View, Text, ActivityIndicator} from 'react-native';
+import 'react-native-gesture-handler';
+import { Platform, KeyboardAvoidingView, View, Text, ActivityIndicator, Alert, TouchableOpacity} from 'react-native';
 import tw from 'twrnc';
+import twr from './helpers/tailwind'
 import { Provider } from 'react-redux';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { createDrawerNavigator} from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { store } from './store/store';
 import React, { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Icon } from 'react-native-elements';
 
 import RootStackScreen from './screens/RootStackScreen';
 import HomeScreen from './screens/HomeScreen';
+import UserScreen from './screens/UserScreen';
+import ReceiptsScreen from './screens/ReceiptsScreen';
 import { AuthContext } from './components/context';
-import { authentication } from './api';
+import { authentication, createUser } from './api';
+import CustomDrawer from './components/CustomDrawer';
+import EditUserScreen from './screens/EditUserScreen';
+import DetailedReceipt from './screens/DetailedReceipt';
 
 export default function App() {
-  const Stack = createNativeStackNavigator();
-
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [userToken, setUserToken] = React.useState(null);
+  const Drawer = createDrawerNavigator();
 
   const initialLoginState = {
     isLoading: true,
+    userId: null,
     userName: null,
     userToken: null,
   }
@@ -36,7 +42,8 @@ export default function App() {
       case 'LOGIN':
         return {
           ...prevState,
-          userName: action.id,
+          userId: action.id,
+          userName: action.mail,
           userToken: action.token,
           isLoading: false
         }
@@ -44,14 +51,8 @@ export default function App() {
         return {
           ...prevState,
           userName: null,
+          userId: null,
           userToken: null,
-          isLoading: false
-        }
-      case 'REGISTER':
-        return {
-          ...prevState,
-          userName: action.id,
-          userToken: action.token,
           isLoading: false
         }
     }
@@ -66,29 +67,44 @@ export default function App() {
         password: password
       }
       let userToken = null
+      let id = null
       let userData = await authentication(user)
-      
+      if(Object.keys(userData)[0]==="message"){
+        Alert.alert(
+            "Alerta",
+            userData.message,
+            [
+              {
+                text: "OK",
+                style: "cancel"
+              }
+            ]
+          );
+    } else {
       if ( userData.accessToken !== undefined ) {
         userToken = userData.accessToken
+        id = userData.id
         try{
-          await AsyncStorage.setItem('userToken', userToken)
+          const jsonValue = JSON.stringify({userToken:userToken,id:id})
+          await AsyncStorage.setItem('user', jsonValue)
         } catch(e) {
           console.log(e)
         }
       }
-      dispatch({type: 'LOGIN', id:userName, token:userToken})
+    }
+      dispatch({type: 'LOGIN', id:id, mail:userName, token:userToken}) 
     },
     signOut: async () => {
       try{
-        await AsyncStorage.removeItem('userToken')
+        await AsyncStorage.removeItem('user')
       } catch(e) {
         console.log(e)
       }
       dispatch({type: 'LOGOUT'})
     },
-    signUp: () => {
-      setUserToken('test');
-      setIsLoading(false);
+    signUp: async (user) => {
+      let newUser = await createUser(user)
+      return newUser
     }
   }))
 
@@ -97,7 +113,12 @@ export default function App() {
       let userToken;
       userToken = null;
       try {
-        userToken = await AsyncStorage.getItem('userToken')
+        const user = await AsyncStorage.getItem('user')
+        if(user != null){
+          let userD = JSON.parse(user)
+          userToken = userD.userToken
+        };
+        
       } catch(e) {
         console.log(e)
       }
@@ -114,8 +135,8 @@ export default function App() {
   }
 
   return (
-    <AuthContext.Provider value={authContext}>
-      <Provider store={store}>
+    <Provider store={store}>
+      <AuthContext.Provider value={authContext}>
         <NavigationContainer>
           <SafeAreaProvider>
             <KeyboardAvoidingView
@@ -124,23 +145,72 @@ export default function App() {
               keyboardVerticalOffset={Platform.OS === 'ios' ? -64 : 0}
             >
               { loginState.userToken !== null ? (
-                <Stack.Navigator>
-                <Stack.Screen
-                  name='HomeScreen'
-                  component={HomeScreen}
-                  options={{
-                    headerShown: false,
-                  }}
-                />
-              </Stack.Navigator> 
+                <Drawer.Navigator 
+                  screenOptions={{
+                    headerShown: false, 
+                    drawerActiveBackgroundColor:'#FFB00B',
+                    drawerActiveTintColor:'#FFF',
+                    drawerInactiveTintColor:'#FFB00B',
+                    drawerLabelStyle:{marginLeft:-25}
+                  }} 
+                  useLegacyImplementation={true} 
+                  drawerContent={props => <CustomDrawer {...props}/>}>
+                  <Drawer.Screen 
+                    name='Inicio'
+                    component={HomeScreen}
+                    options={{
+                      drawerIcon: ({color}) => 
+                      (<Icon
+                        name='cart-outline'
+                        type="ionicon"
+                        color={color}
+                      />)
+                    }}/>
+                  <Drawer.Screen 
+                    name='Usuario'
+                    component={UserScreen}
+                    options={{
+                      drawerIcon: ({color}) => 
+                      (<Icon
+                        name='person-outline'
+                        type="ionicon"
+                        color={color}
+                      />)
+                    }}/>
+                  <Drawer.Screen 
+                    name='Recibos'
+                    component={ReceiptsScreen}
+                    options={{
+                      drawerIcon: ({color}) => 
+                      (<Icon
+                        name='receipt-outline'
+                        type="ionicon"
+                        color={color}
+                      />)
+                    }}/>
+                  <Drawer.Screen 
+                    name='EditUserScreen'
+                    component={EditUserScreen}
+                    options={{
+                      drawerItemStyle: { height: 0 }
+                    }}
+                    />
+                  <Drawer.Screen 
+                    name='DetalleFactura'
+                    component={DetailedReceipt}
+                    options={{
+                      drawerItemStyle: { height: 0 }
+                    }}
+                    />
+                </Drawer.Navigator>
               ) : (
                 <RootStackScreen/>
               )}
             </KeyboardAvoidingView>
           </SafeAreaProvider>
-        </NavigationContainer>
-      </Provider>
-    </AuthContext.Provider>
+        </NavigationContainer>  
+      </AuthContext.Provider>
+    </Provider>
   );
 }
 

@@ -3,7 +3,8 @@ module.exports = {
       colors: {
         stg: '#FFB00B',
         'white': '#ffffff',
-        'black': '#0e1111'
+        'black': '#0e1111',
+        'danger': '#F55353'
       },
     }
   }
