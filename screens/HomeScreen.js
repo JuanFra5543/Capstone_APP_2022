@@ -69,7 +69,7 @@ const HomeScreen = ({navigation}) => {
         <View style={tw`w-full absolute -bottom-12`}>
           <View style={[tw`w-24 h-24 bg-white rounded-full justify-center self-center border-2`,twr`border-stg`]}>
             <TouchableOpacity 
-                  onPress={()=>console.log("Funciona")}
+                  onPress={()=>navigation.navigate("QrScreen")}
                   style={[tw`w-20 h-20 rounded-full justify-center self-center`,twr`bg-stg`]}
                   >
                   <Icon

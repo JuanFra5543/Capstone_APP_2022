@@ -28,7 +28,7 @@ const DetailedReceipt = ({ route, navigation }) => {
   const data = route.params;
   const body = (
     <View style={tw`px-5`}>
-      <BackButton navigation={navigation} routes={"Recibos"} />
+      <BackButton navigation={navigation} routes={"Recibos"} qrScreen={false}/>
       <View style={tw`mt-16`}>
         <View style={tw`border-b-2 border-gray-100 py-4`}>
           <Text>Nombre: {data.clientName}</Text>

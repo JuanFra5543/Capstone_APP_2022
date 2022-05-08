@@ -1,4 +1,4 @@
-const api = "http://172.31.176.71:5000/api/";
+const api = "http://192.168.3.10:5000/api/";
 
 export const getTasks = async () => {
     const res = await fetch(api, {
@@ -9,7 +9,7 @@ export const getTasks = async () => {
   };
 
 export const authentication = async (user) => {
-  const res = await fetch(api + "auth/login", {
+  const res = await fetch(api + "auth/loginClient", {
     method: "POST",
     headers: { Accept: "application/json", "Content-Type": "application/json" },
     body: JSON.stringify(user)

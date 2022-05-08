@@ -20,6 +20,7 @@ import { authentication, createUser } from './api';
 import CustomDrawer from './components/CustomDrawer';
 import EditUserScreen from './screens/EditUserScreen';
 import DetailedReceipt from './screens/DetailedReceipt';
+import QrScreen from './screens/QrScreen';
 
 export default function App() {
   const Drawer = createDrawerNavigator();
@@ -198,6 +199,13 @@ export default function App() {
                   <Drawer.Screen 
                     name='DetalleFactura'
                     component={DetailedReceipt}
+                    options={{
+                      drawerItemStyle: { height: 0 }
+                    }}
+                    />
+                  <Drawer.Screen 
+                    name='QrScreen'
+                    component={QrScreen}
                     options={{
                       drawerItemStyle: { height: 0 }
                     }}

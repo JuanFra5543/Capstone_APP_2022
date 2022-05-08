@@ -6,12 +6,31 @@ import { Icon } from "react-native-elements";
 import { AuthContext } from "../components/context";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { useSelector } from "react-redux";
-import { selectName, selectMail, selectPhone, selectPassword } from '../slices/userData';
-import { editUser } from '../api';
+import { useSelector, useDispatch } from "react-redux"; 
+import { selectName, selectMail, selectPhone, selectPassword,  setName, setPhone, setMail, setPassword } from '../slices/userData';
+import { editUser, getUser } from '../api';
 import BackButton from "../components/BackButton";
 
 const EditUserScreen = ({navigation}) => {
+
+  const dispatch = useDispatch();
+
+  const refreshUserData = async () => {
+    try {
+      const userDT = await AsyncStorage.getItem('user')
+      if(userDT !== null) {
+        let userData = JSON.parse(userDT)
+        const data = await getUser(userData.id, userData.userToken)
+        dispatch(setName(data.name))
+        dispatch(setPhone(data.phone))
+        dispatch(setMail(data.email))
+        dispatch(setPassword(data.password))
+      }
+    } catch(e) {
+      // error reading value
+    }
+    navigation.navigate("Inicio")
+  }
 
   const name = useSelector(selectName)
   const phone = useSelector(selectPhone)
@@ -79,6 +98,7 @@ const EditUserScreen = ({navigation}) => {
         if(userDT !== null) {
             let userData = JSON.parse(userDT)
             let res = await editUser(userData.id, userData.userToken, user)
+            
             if(res.message==="Usuario actualizado correctamente!"){
                 Alert.alert(
                     "Alerta",
@@ -86,7 +106,7 @@ const EditUserScreen = ({navigation}) => {
                     [
                       {
                         text: "OK",
-                        onPress: () => navigation.navigate("Inicio"),
+                        onPress: () => refreshUserData(),
                         style: "cancel"
                       }
                     ]
@@ -113,7 +133,7 @@ const EditUserScreen = ({navigation}) => {
 
   const body = (
     <View style={tw`px-5`}>
-      <BackButton navigation={navigation} routes={"Usuario"} />
+      <BackButton navigation={navigation} routes={"Usuario"} qrScreen={false}/>
       <View style={tw`w-full items-center justify-center mt-16`}>
         <Text style={tw`text-stg text-2xl`}>Editar Cuenta</Text>
         <View style={tw`px-8`}>
