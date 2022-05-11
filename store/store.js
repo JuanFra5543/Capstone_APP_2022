@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import navReducer from "../slices/userData";
+import userReducer from "../slices/userData";
+import bluetoothReducer from "../slices/bluetoothData"
 
 export const store = configureStore({
     reducer:{
-        nav: navReducer,
+        user: userReducer,
+        bluetooth: bluetoothReducer
     },
 });

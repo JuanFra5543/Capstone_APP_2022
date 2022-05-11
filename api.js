@@ -1,4 +1,5 @@
-const api = "http://192.168.3.10:5000/api/";
+const api = "http://172.31.144.212:5000/api/";
+// const api = "http://192.168.3.10:5000/api/";
 
 export const getTasks = async () => {
     const res = await fetch(api, {
@@ -43,3 +44,18 @@ export const editUser = async (id,token,user) => {
   return await res.json();
 };
 
+export const getProduct = async (code,token) => {
+  const res = await fetch(api + "stock/client/" + code, {
+    method: "GET",
+    headers: { Accept: "application/json", "Content-Type": "application/json", "x-access-token" : token },
+  });
+  return await res.json();
+};
+
+export const getClients = async (id,token) => {
+  const res = await fetch(api + "client/" + id, {
+    method: "GET",
+    headers: { Accept: "application/json", "Content-Type": "application/json", "x-access-token" : token },
+  });
+  return await res.json();
+};

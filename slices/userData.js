@@ -8,7 +8,7 @@ const initialState = {
 };
 
 export const userData = createSlice({
-    name: 'nav',
+    name: 'user',
     initialState,
     reducers: {
         setName:(state, action) => {
@@ -30,9 +30,9 @@ export const { setName, setPhone, setMail, setPassword } = userData.actions;
 
 // Selectors
 
-export const selectName = (state) => state.nav.name
-export const selectPhone = (state) => state.nav.phone
-export const selectMail = (state) => state.nav.mail
-export const selectPassword = (state) => state.nav.password
+export const selectName = (state) => state.user.name
+export const selectPhone = (state) => state.user.phone
+export const selectMail = (state) => state.user.mail
+export const selectPassword = (state) => state.user.password
 
 export default userData.reducer

@@ -3,11 +3,14 @@ import { Text, View, TouchableOpacity, SafeAreaView } from "react-native";
 import tw from 'twrnc';
 import { BarCodeScanner } from "expo-barcode-scanner";
 import BackButton from "../components/BackButton";
+import { useDispatch } from "react-redux";
+import { setId, setNameBluetooth, setAddress, setConnected } from '../slices/bluetoothData';
 
 const QrScreen = ({navigation}) => {
+
+  const dispatch = useDispatch();
+
   const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-  const [text, setText] = useState("Not yet scanned");
 
   const askForCameraPermission = () => {
     (async () => {
@@ -23,9 +26,12 @@ const QrScreen = ({navigation}) => {
 
   // What happens when we scan the bar code
   const handleBarCodeScanned = ({ type, data }) => {
-    setScanned(true);
-    setText(data);
-    console.log("Type: " + type + "\nData: " + data);
+    const jsonData = JSON.parse(data)
+    dispatch(setId(jsonData.id))
+    dispatch(setNameBluetooth(jsonData.name))
+    dispatch(setAddress(jsonData.address))
+    dispatch(setConnected(true))
+    navigation.navigate("Inicio")
     
   };
 
@@ -60,9 +66,6 @@ const QrScreen = ({navigation}) => {
       </View>
     </View>
   );
-
-  const iosView = <SafeAreaView style={tw`bg-white h-full`}>{body}</SafeAreaView>;
-  const andView = <View style={tw`bg-white h-full pt-10`}>{body}</View>;
   return body;
 };
 

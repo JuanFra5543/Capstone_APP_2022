@@ -25,7 +25,7 @@ function ItemContainer({data}) {
             <Text style={tw`px-2 text-xs text-gray-400`}>{data.itemDescription}</Text>
         </View>
         <View style={tw`py-8 w-2/8`}>
-            <Text style={tw`font-semibold`}>{data.itemPrice}</Text>
+            <Text style={tw`font-semibold`}>${data.itemPrice}</Text>
         </View>
     </View>
   )
