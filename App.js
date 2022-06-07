@@ -21,6 +21,8 @@ import CustomDrawer from './components/CustomDrawer';
 import EditUserScreen from './screens/EditUserScreen';
 import DetailedReceipt from './screens/DetailedReceipt';
 import QrScreen from './screens/QrScreen';
+import PaymentScreen from './screens/PaymentScreen';
+import CreateClient from './screens/CreateClient';
 
 export default function App() {
   const Drawer = createDrawerNavigator();
@@ -206,6 +208,20 @@ export default function App() {
                   <Drawer.Screen 
                     name='QrScreen'
                     component={QrScreen}
+                    options={{
+                      drawerItemStyle: { height: 0 }
+                    }}
+                    />
+                  <Drawer.Screen 
+                    name='PaymentScreen'
+                    component={PaymentScreen}
+                    options={{
+                      drawerItemStyle: { height: 0 }
+                    }}
+                    />
+                  <Drawer.Screen 
+                    name='CreateClient'
+                    component={CreateClient}
                     options={{
                       drawerItemStyle: { height: 0 }
                     }}

@@ -6,36 +6,31 @@ import { getClients } from '../api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const SelectClient = ({data,total}) => {
-  const [items,setItems] = React.useState([]);
-    const [selectedItem,setSelectedItem] = React.useState({id:-1,name:"Seleccione Cliente"})
+import { useSelector, useDispatch } from "react-redux";
+import { setClient, selectClient } from '../slices/userData';
+
+const SelectClient = ({clients}) => {
+
+  const dispatch = useDispatch()
+
+  const clientSelected = useSelector(selectClient)
+
+  const items = clients;
+    const [selectedItem,setSelectedItem] = React.useState(clientSelected)
     const [dropDown,setDropdown] = React.useState(false)
     const selectItem = (item) => {
-        setSelectedItem(item)
-        setDropdown(false)
+      dispatch(setClient(item))
+      setSelectedItem(item)
+      setDropdown(false)
     }
 
     const createData = () => {
-      if(items.length===0){
-        insertClients()
-      }
       setDropdown(!dropDown)
-    }
-    const insertClients = async () => {
-      try {
-        const userDT = await AsyncStorage.getItem('user')
-        if(userDT !== null) {
-          let userData = JSON.parse(userDT)
-          let clientData = await getClients(userData.id, userData.userToken)
-          setItems(clientData)
-        }
-      } catch (error) {
-        
-      }
     }
     
   return (
-    <View style={[tw`mx-2 w-2/3 justify-center`, dropDown ? tw`rounded-t-2 bg-gray-100`: tw``]}>
+    <View style={tw`w-2/3`}>
+      <View style={[tw`justify-center`, dropDown ? tw`rounded-t-2 bg-gray-100`: tw``]}>
         <TouchableOpacity style={tw`bg-gray-200 px-2 rounded-2 h-10 justify-center`} onPress={()=>{createData()}}>
             <View style={tw`flex-row justify-between`}>
                 <Text style={tw`pt-1`}>{selectedItem.name}</Text>
@@ -48,18 +43,20 @@ const SelectClient = ({data,total}) => {
         </TouchableOpacity>
         {dropDown ?  
             <FlatList
-              style={tw`bg-gray-100`}
+              style={tw`bg-gray-100 max-h-20`}
               data={items}
               keyExtractor={(item) => item.id}
               renderItem={({item}) => (
-                <TouchableOpacity style={tw`p-2`} onPress={()=>selectItem(item)}>
+                <TouchableOpacity style={tw`p-2 border-b-2 border-gray-200`} onPress={()=>selectItem(item)}>
                     <Text>{item.name}</Text>
                 </TouchableOpacity>
               )}
             /> 
             : 
             <View></View>}
+      </View>
     </View>
+    
   )
 }
 

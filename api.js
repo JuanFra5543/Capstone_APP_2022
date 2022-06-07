@@ -1,5 +1,6 @@
-const api = "http://172.31.144.212:5000/api/";
+const api = "http://172.31.191.161:5000/api/";
 // const api = "http://192.168.3.10:5000/api/";
+export const stripeKey = 'pk_test_51KxvwmL0mNx5gOqGgY6N9DtzurxYyvVS7qGUdRU76pRBnW5WUvrUO5nJzPIqNSYoQsfpCBM85I41GwNIfXk5V4dQ00YXwySM4l'
 
 export const getTasks = async () => {
     const res = await fetch(api, {
@@ -10,6 +11,7 @@ export const getTasks = async () => {
   };
 
 export const authentication = async (user) => {
+  console.log("entramos",api + "auth/loginClient")
   const res = await fetch(api + "auth/loginClient", {
     method: "POST",
     headers: { Accept: "application/json", "Content-Type": "application/json" },
@@ -58,4 +60,46 @@ export const getClients = async (id,token) => {
     headers: { Accept: "application/json", "Content-Type": "application/json", "x-access-token" : token },
   });
   return await res.json();
+};
+
+export const createClient = async (token,client) => {
+  const response = await fetch(api + 'client/', {
+    method: 'POST',
+    headers: { Accept: "application/json", "Content-Type": "application/json", "x-access-token" : token },
+    body: JSON.stringify(client)
+  });
+  const clientSecret = await response.json();
+  return clientSecret
+};
+
+export const createReceipt = async (token,payload) => {
+  const response = await fetch(api + 'receipt/', {
+    method: 'POST',
+    headers: { Accept: "application/json", "Content-Type": "application/json", "x-access-token" : token },
+    body: JSON.stringify(payload)
+  });
+  return await response.json();
+};
+
+export const getReceipts = async (token,id) => {
+  const response = await fetch(api + `receipt/client/${id}`, {
+    method: 'GET',
+    headers: { Accept: "application/json", "Content-Type": "application/json", "x-access-token" : token },
+  });
+  return await response.json();
+};
+
+export const fetchPaymentSheetParams = async (stripeId, total , token) => {
+  const response = await fetch(api + 'receipt/payment-intent', {
+    method: 'POST',
+    headers: { Accept: "application/json", "Content-Type": "application/json", "x-access-token" : token },
+    body: JSON.stringify({
+      total:total,
+      stripeId: stripeId,
+      paymentMethodType:'card',
+      currency:'usd',
+    })
+  });
+  const clientSecret = await response.json();
+  return clientSecret
 };

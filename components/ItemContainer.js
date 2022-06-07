@@ -1,4 +1,4 @@
-import { View, Text} from 'react-native';
+import { View, Text, Image} from 'react-native';
 import React from 'react';
 import tw from 'twrnc';
 import twr from '../helpers/tailwind'
@@ -6,17 +6,19 @@ import { Icon } from 'react-native-elements';
 
 
 function ItemContainer({data}) {
+    console.log(data.itemIcon)
   return (
     <View style={tw`h-20 flex-row items-stretch`}>
         <View style={tw`p-8 h-8 w-8`}>
-            <View style={tw`absolute left-4 top-8`}>
+            <View style={tw`absolute left-4 top-2`}>
                 <View style={tw`absolute z-1 bottom-4 bg-gray-100 h-4 w-4 rounded-full`}>
                     <Text style={tw`font-bold text-xs text-center`}>{data.quantity}</Text>
                 </View>
-                <Icon
-                    name={data.itemIcon}
-                    type='font-awesome'
-                    color="#FFB00B"
+                <Image
+                    style={tw`w-10 h-10`}
+                    source={{
+                    uri: data.itemIcon
+                    }}
                 />
             </View>
         </View>

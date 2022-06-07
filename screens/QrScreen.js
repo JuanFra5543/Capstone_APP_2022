@@ -4,7 +4,7 @@ import tw from 'twrnc';
 import { BarCodeScanner } from "expo-barcode-scanner";
 import BackButton from "../components/BackButton";
 import { useDispatch } from "react-redux";
-import { setId, setNameBluetooth, setAddress, setConnected } from '../slices/bluetoothData';
+import { setNameBluetooth, setConnected } from '../slices/bluetoothData';
 
 const QrScreen = ({navigation}) => {
 
@@ -26,10 +26,7 @@ const QrScreen = ({navigation}) => {
 
   // What happens when we scan the bar code
   const handleBarCodeScanned = ({ type, data }) => {
-    const jsonData = JSON.parse(data)
-    dispatch(setId(jsonData.id))
-    dispatch(setNameBluetooth(jsonData.name))
-    dispatch(setAddress(jsonData.address))
+    dispatch(setNameBluetooth(data))
     dispatch(setConnected(true))
     navigation.navigate("Inicio")
     

@@ -4,8 +4,8 @@ import React from "react";
 import { Icon } from 'react-native-elements';
 
 import { useSelector, useDispatch } from "react-redux";
-import { setName, setPhone, setMail, setPassword } from '../slices/userData';
-import { selectId, selectNameBluetooth, selectAddress, selectConnected } from '../slices/bluetoothData';
+import { setName, setPhone, setMail, setPassword, setStripeId } from '../slices/userData';
+import { selectNameBluetooth, selectConnected } from '../slices/bluetoothData';
 
 import twr from '../helpers/tailwind'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,19 +13,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUser, getProduct } from '../api';
 import DrawerBarButton from '../components/DrawerBarButton';
 import ItemContainer from '../components/ItemContainer';
-import SelectClient from '../components/SelectClient';
 
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
-import CreateNewClient from '../components/CreateNewClient';
-
-const productsData = ["1_1_Doritos","1_2_Ruffles","1_3_Nachos","1_4_Kachitos"]
+const productsData = ["11D","12R","13N","14K"]
 
 const HomeScreen = ({navigation}) => {
-   
-  const sheetRef = React.useRef(<BottomSheet></BottomSheet>);
-  const [isOpen, setIsOpen] = React.useState(false)
-  const [snapPoints,setSnapPoint] = React.useState(["30%"])
-  const [createNew, setCreateNew] = React.useState(false)
 
   const [isFetching, setIsFetching] = React.useState(false);
   const [total, setTotal] = React.useState(0);
@@ -33,37 +24,13 @@ const HomeScreen = ({navigation}) => {
   const [data,setData] = React.useState([])
 
   const dispatch = useDispatch();
-  
-  const bId = useSelector(selectId)
+
   const bName = useSelector(selectNameBluetooth)
-  const bAddress = useSelector(selectAddress)
   const bConnected = useSelector(selectConnected)
 
-  const changeDistance = () => {
-    if(snapPoints[0]==="90%"){
-      setCreateNew(false)
-      setSnapPoint(["30%"])
-    } else {
-      setCreateNew(true)
-      setSnapPoint(["90%"])
-    }
-  }
-
-  const testFunction = React.useCallback((index) => {
-    sheetRef.current?.snapToIndex(index)
-    setIsOpen(true)
-  },[])
-
-  const testFunction2 = () => {
-    if(snapPoints[0]==="90%"){
-      setCreateNew(false)
-      setSnapPoint(["30%"])
-    }
-    setIsOpen(false)
-  }
 
   const printBluetoothData = () => {
-    console.log(bId,bName,bAddress,bConnected)
+    console.log(bName,bConnected)
   }
 
   const insertProductInCart = async () => {
@@ -74,22 +41,22 @@ const HomeScreen = ({navigation}) => {
         let ranNum = Math.floor(Math.random()*(5-1))
         let userData = JSON.parse(userDT)
         let productData = await getProduct(productsData[ranNum], userData.userToken)
-        let test = data.findIndex(product => product.id === productData.id)
+        let test = data.findIndex(product => product.id === productData.product.id)
         if( test < 0 ){
           let newProduct = {
-            id:productData.id,
-            itemName:productData.name,
-            itemDescription:productData.description,
-            itemIcon:'calculator',
-            itemPrice:parseFloat(productData.price),
+            id:productData.stockId,
+            itemName:productData.product.name,
+            itemDescription:productData.product.description,
+            itemIcon:productData.product.dataUrl,
+            itemPrice:parseFloat(productData.product.price),
             quantity: 1,
           }
           setData(d => [ ...d, newProduct])
           setTotal(d => d + newProduct.itemPrice)
         } else {
           data[test].quantity += 1
-          data[test].itemPrice = parseFloat(data[test].itemPrice) + parseFloat(productData.price)
-          setTotal(d => d + parseFloat(productData.price))
+          data[test].itemPrice = parseFloat(data[test].itemPrice) + parseFloat(productData.product.price)
+          setTotal(d => d + parseFloat(productData.product.price))
         }
       }
     } catch(e) {
@@ -109,6 +76,7 @@ const HomeScreen = ({navigation}) => {
         dispatch(setPhone(data.phone))
         dispatch(setMail(data.email))
         dispatch(setPassword(data.password))
+        dispatch(setStripeId(data.stripeId))
       }
     } catch(e) {
       // error reading value
@@ -118,7 +86,7 @@ const HomeScreen = ({navigation}) => {
   getData()
 
   const body = (
-    <View style={[tw`px-5`,isOpen? tw`bg-gray-500`:tw``]}>
+    <View style={tw`px-5`}>
       <DrawerBarButton navigation={navigation}/>
       <View style={[tw`mt-16 h-3/4`, bConnected ? tw`` : tw`justify-end self-center`]}>
         {bConnected ? 
@@ -161,10 +129,10 @@ const HomeScreen = ({navigation}) => {
       </View>
       }
       
-      <View style={[tw`w-full h-18 rounded-10 justify-center self-center`,bConnected ? [tw`border`,twr`border-stg`] : isOpen? tw`bg-gray-500` : twr`bg-stg`]}>
+      <View style={[tw`w-full h-18 rounded-10 justify-center self-center`,bConnected ? [tw`border`,twr`border-stg`] : twr`bg-stg`]}>
         { bConnected ?
         <TouchableOpacity 
-              onPress={()=>{testFunction(0)}}
+              onPress={()=>{navigation.navigate("PaymentScreen",{total:total, dataItems:data})}}
               style={tw`justify-center flex-row`}
               >
               <Icon
@@ -188,44 +156,6 @@ const HomeScreen = ({navigation}) => {
               />
         </TouchableOpacity>}
       </View>
-      <BottomSheet ref={sheetRef} snapPoints={snapPoints} index={-1} enablePanDownToClose={true} onClose={()=>{testFunction2()}}>
-        <BottomSheetView>
-          { createNew ? 
-            <View>
-              <View style={tw`p-2 flex-row justify-around`}>
-                <Text style={tw`font-bold`}> 
-                  Total:
-                </Text>
-                <Text style={tw`font-bold`}>
-                  $ {total} 
-                </Text> 
-              </View>
-              <CreateNewClient  dataProducts={data} total={total}/>
-            </View>
-          :
-          <View>
-            <View style={tw`p-2 flex-row justify-around`}>
-                <Text style={tw`font-bold`}> 
-                  Total:
-                </Text>
-                <Text style={tw`font-bold`}>
-                  $ {total} 
-                </Text> 
-            </View>
-            <View style={tw`flex-row`}>
-              <SelectClient data={data} total={total}/>
-              <TouchableOpacity style={tw`mx-2 bg-green-300 rounded-2 h-10 w-20 justify-center`} onPress={()=>{changeDistance()}}>
-                <Icon
-                  name='person-add-outline'
-                  type='ionicon'
-                  color="#FFFFFF"
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-          }
-        </BottomSheetView>
-      </BottomSheet>
     </View>
   );
   const iosView = <SafeAreaView style={tw`bg-white h-full`}>{body}</SafeAreaView>;

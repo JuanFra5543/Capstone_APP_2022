@@ -5,34 +5,37 @@ import React from "react";
 import DrawerBarButton from "../components/DrawerBarButton";
 import ReceiptContainer from '../components/ReceiptContainer';
 
-const data = [
-  {
-    id: "1234",
-    receiptDate: "30/03/2022",
-    clientName: "Juan Francisco Ruano Vega",
-    price: "$XX.XX",
-  },
-  {
-    id: "5678",
-    receiptDate: "10/04/2022",
-    clientName: "Felipe Figueroa",
-    price: "$XX.XX",
-  },
-  {
-    id: "9101",
-    receiptDate: "16/04/2022",
-    clientName: "Christian Camacho",
-    price: "$XX.XX",
-  },
-];
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getReceipts } from "../api";
+
 
 const ReceiptsScreen = ({ navigation }) => {
+  const [data,setData] = React.useState([]);
+
+  const getReceiptsData = async () => {
+    try {
+      const userDT = await AsyncStorage.getItem('user')
+      if(userDT !== null) {
+          let userData = JSON.parse(userDT)
+          getReceipts(userData.userToken,userData.id)
+          .then((data) => setData(data))
+          .catch((err) => console.log(err));
+      }
+    } catch (error) {
+        console.log(error)
+    }
+  }
+
+  React.useEffect(()=>{
+    getReceiptsData()
+  },[])
   const body = (
-    <View style={tw`px-5`}>
+    <View style={tw`px-5 z-0`}>
       <DrawerBarButton navigation={navigation}/>
-      <View style={tw`mt-16`}>
+      <View style={tw`mt-16 z-0`}>
         <Text style={[tw`text-center text-xl font-bold p-5`,twr`text-stg`]}>Recibos</Text>
         <FlatList
+            style={tw`z-1 max-h-8/9`}
             data={data}
             keyExtractor={(item) => item.id}
             renderItem={({item}) => (

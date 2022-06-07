@@ -1,5 +1,6 @@
 import { View, Text, SafeAreaView, TouchableOpacity, TextInput, Alert  } from 'react-native'
-import tw from "../helpers/tailwind";
+import tw from "twrnc";
+import twr from "../helpers/tailwind";
 import React from 'react'
 import { Icon } from "react-native-elements";
 
@@ -132,68 +133,68 @@ const EditUserScreen = ({navigation}) => {
   }
 
   const body = (
-    <View style={tw`px-5`}>
+    <View style={twr`px-5`}>
       <BackButton navigation={navigation} routes={"Usuario"} qrScreen={false}/>
-      <View style={tw`w-full items-center justify-center mt-16`}>
-        <Text style={tw`text-stg text-2xl`}>Editar Cuenta</Text>
-        <View style={tw`px-8`}>
-          <Text style={tw`my-4`}>Nombre</Text>
+      <View style={twr`w-full items-center justify-center mt-16`}>
+        <Text style={twr`text-stg text-2xl`}>Editar Cuenta</Text>
+        <View style={twr`px-8`}>
+          <Text style={twr`my-4`}>Nombre</Text>
           <View
             style={[
-              tw`border-2 border-stg bg-white rounded px-2 flex-row shadow-lg`,
-              Platform.OS === "ios" ? tw`py-2` : tw`py-1`,
+              twr`border-2 border-stg bg-white rounded px-2 flex-row shadow-lg h-10`
             ]}
           >
             <TextInput
-              style={tw`w-full`}
+              style={twr`w-full`}
               autoCapitalize="none"
+              placeholderTextColor="#000"
               placeholder={name}
               onChangeText={(value) => textInputChance("name",value)}
             />
           </View>
-          <Text style={tw`my-4`}>Telefono</Text>
+          <Text style={twr`my-4`}>Telefono</Text>
           <View
             style={[
-              tw`border-2 border-stg bg-white rounded px-2 flex-row shadow-lg`,
-              Platform.OS === "ios" ? tw`py-2` : tw`py-1`,
+              twr`border-2 border-stg bg-white rounded px-2 flex-row shadow-lg h-10`
             ]}
           >
             <TextInput
-              style={tw`w-full`}
+              style={twr`w-full`}
               autoCapitalize="none"
               keyboardType="numeric"
+              placeholderTextColor="#000"
               placeholder={phone}
               onChangeText={(value) => textInputChance("phone",value)}
             />
           </View>
-          <Text style={tw`my-4`}>Email</Text>
+          <Text style={twr`my-4`}>Email</Text>
           <View
             style={[
-              tw`border-2 border-stg bg-white rounded px-2 flex-row shadow-lg`,
-              Platform.OS === "ios" ? tw`py-2` : tw`py-1`,
+              twr`border-2 border-stg bg-white rounded px-2 flex-row shadow-lg h-10`
             ]}
           >
             <TextInput
-              style={tw`w-full`}
+              style={twr`w-full`}
               autoCapitalize="none"
+              placeholderTextColor="#000"
               placeholder={mail}
               onChangeText={(value) => textInputChance("email",value)}
             />
           </View>
-          <Text style={tw`my-4`}>Contraseña</Text>
+          <Text style={twr`my-4`}>Contraseña</Text>
           <View
             style={[
-              tw`border-2 border-stg  bg-white rounded py-1 px-2 flex-row items-center shadow-lg`,
-              Platform.OS === "ios" ? tw`py-2` : tw`py-1`,
+              twr`border-2 border-stg bg-white rounded pl-2 flex-row items-center shadow-lg h-10`
             ]}
           >
             <TextInput
-              style={tw`grow w-3/4`}
+              style={twr`grow w-3/4`}
               secureTextEntry={data.secureTextEntry}
+              placeholderTextColor="#000"
               placeholder="Contraseña"
               onChangeText={(value) => textInputChance("password",value)}
             />
-            <TouchableOpacity onPress={updateSecureTextEntry}>
+            <TouchableOpacity onPress={updateSecureTextEntry} style={tw`h-full w-10 pt-2`}>
               <Icon
                 name={!data.secureTextEntry ? "eye" : "eye-slash"}
                 type="font-awesome"
@@ -202,20 +203,21 @@ const EditUserScreen = ({navigation}) => {
               />
             </TouchableOpacity>
           </View>
-          <Text style={tw`my-4`}>Confirmar Contraseña</Text>
+          <Text style={twr`my-4`}>Confirmar Contraseña</Text>
               <View
               style={[
-                  tw`border-2 bg-white rounded py-1 px-2 flex-row items-center shadow-lg`,
-                  Platform.OS === "ios" ? tw`py-2` : tw`py-1`, data.confirmPassword ? tw`border-stg` : tw`border-danger`
+                  twr`border-2 bg-white rounded pl-2 flex-row items-center shadow-lg h-10`,
+                  data.confirmPassword ? twr`border-stg` : twr`border-danger`
               ]}
               >
               <TextInput
-                  style={tw`grow w-3/4`}
+                  style={twr`grow w-3/4`}
                   secureTextEntry={data.secureTextEntryC}
+                  placeholderTextColor="#000"
                   placeholder="Contraseña"
                   onChangeText={(value) => confirmPassword(value)}
               />
-              <TouchableOpacity onPress={updateSecureTextEntryC}>
+              <TouchableOpacity onPress={updateSecureTextEntryC} style={tw`h-full w-10 pt-2`}>
                   <Icon
                   name={!data.secureTextEntryC ? "eye" : "eye-slash"}
                   type="font-awesome"
@@ -225,13 +227,13 @@ const EditUserScreen = ({navigation}) => {
               </TouchableOpacity>
           </View>
         </View>
-        <View style={tw`p-8 items-center`}>
+        <View style={twr`p-8 items-center`}>
           <TouchableOpacity
             onPress={() => {editHandle();
             }}
           >
-            <View style={tw`bg-stg rounded-lg w-32 p-2 shadow-xl`}>
-              <Text style={tw`text-white text-center text-lg`}>Guardar Cambios</Text>
+            <View style={twr`bg-stg rounded-lg w-32 p-2 shadow-xl`}>
+              <Text style={twr`text-white text-center text-lg`}>Guardar Cambios</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -239,12 +241,12 @@ const EditUserScreen = ({navigation}) => {
     </View>
   )
   const iosView = (
-    <SafeAreaView style={tw`bg-white h-full`}>
+    <SafeAreaView style={twr`bg-white h-full`}>
       {body}
     </SafeAreaView>
   );
   const andView = (
-    <View style={tw`bg-white h-full pt-10`}>
+    <View style={twr`bg-white h-full pt-10`}>
       {body}
     </View>
   );
