@@ -6,7 +6,6 @@ import { Icon } from 'react-native-elements';
 
 
 function ItemContainer({data}) {
-    console.log(data.itemIcon)
   return (
     <View style={tw`h-20 flex-row items-stretch`}>
         <View style={tw`p-8 h-8 w-8`}>

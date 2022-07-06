@@ -85,11 +85,11 @@ const CreateClient = ({navigation,route}) => {
             <Text style={tw`my-2`}>Apellido</Text>
             <TextInput style={tw`border border-gray-200 h-8 p-2 text-gray-500 rounded-2`} placeholder="Apellido" onChangeText={(value) => textInputChance("lastname", value)} />
             <Text style={tw`my-2`}>CI</Text>
-            <TextInput style={tw`border border-gray-200 h-8 p-2 text-gray-500 rounded-2`} placeholder="Cedula" onChangeText={(value) => textInputChance("ci", value)} />
+            <TextInput keyboardType="numeric" style={tw`border border-gray-200 h-8 p-2 text-gray-500 rounded-2`} placeholder="Cedula" onChangeText={(value) => textInputChance("ci", value)} />
             <Text style={tw`my-2`}>Direccion</Text>
             <TextInput style={tw`border border-gray-200 h-8 p-2 text-gray-500 rounded-2`} placeholder="Direccion" onChangeText={(value) => textInputChance("address", value)} />
             <Text style={tw`my-2`}>Telefono</Text>
-            <TextInput style={tw`border border-gray-200 h-8 p-2 text-gray-500 rounded-2`} placeholder="Telefono" onChangeText={(value) => textInputChance("phone", value)} />
+            <TextInput keyboardType="numeric" style={tw`border border-gray-200 h-8 p-2 text-gray-500 rounded-2`} placeholder="Telefono" onChangeText={(value) => textInputChance("phone", value)} />
             <Text style={tw`my-2`}>Correo</Text>
             <TextInput style={tw`border border-gray-200 h-8 p-2 text-gray-500 rounded-2`} placeholder="Correo" onChangeText={(value) => textInputChance("email", value)} />    
         </View>

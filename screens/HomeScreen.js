@@ -1,11 +1,11 @@
-import { Platform, View, SafeAreaView, TouchableOpacity, FlatList, Text} from 'react-native'
+import { Platform, View, SafeAreaView, TouchableOpacity, FlatList, Text, PermissionsAndroid } from 'react-native'
 import tw from 'twrnc';
 import React from "react";
 import { Icon } from 'react-native-elements';
 
 import { useSelector, useDispatch } from "react-redux";
 import { setName, setPhone, setMail, setPassword, setStripeId } from '../slices/userData';
-import { selectNameBluetooth, selectConnected } from '../slices/bluetoothData';
+import { selectNameBluetooth, selectConnected, selectMessage } from '../slices/bluetoothData';
 
 import twr from '../helpers/tailwind'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,8 +13,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUser, getProduct } from '../api';
 import DrawerBarButton from '../components/DrawerBarButton';
 import ItemContainer from '../components/ItemContainer';
-
-const productsData = ["11D","12R","13N","14K"]
 
 const HomeScreen = ({navigation}) => {
 
@@ -27,20 +25,61 @@ const HomeScreen = ({navigation}) => {
 
   const bName = useSelector(selectNameBluetooth)
   const bConnected = useSelector(selectConnected)
+  const [flag, setFlag] = React.useState('')
+  let code = useSelector(selectMessage)
 
+  const requestBluetoothPermision = async () => {
+    try {
+        const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+                title:"Store to go Permission",
+                message:"Store to go needs access to your location " + "so you can use the app correctly.",
+                buttonNeutral: "Ask Me Later",
+                buttonNegative: "Cancel",
+                buttonPositive: "OK"
+            }
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log("ok fine location");
+        } else {
+          console.log("Camera permission denied");
+        }
+        const granted2 = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+            {
+                title:"Store to go Permission",
+                message:"Store to go needs access to your location " + "so you can use the app correctly.",
+                buttonNeutral: "Ask Me Later",
+                buttonNegative: "Cancel",
+                buttonPositive: "OK"
+            }
+        );
+        if (granted2 === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log("Ok coarse location");
+        } else {
+          console.log("Bluetootj permission denied");
+        }
+    } catch (err) {
+      console.warn(err);
+    }
+    navigation.navigate("QrScreen")
+  }
 
   const printBluetoothData = () => {
     console.log(bName,bConnected)
   }
 
-  const insertProductInCart = async () => {
+  const insertProductInCart = async (message) => {
     setIsFetching(true);
+    let codeEl = message.slice(4,8)
+    let code = message.slice(0,3)
+    console.log(code, codeEl)
     try {
       const userDT = await AsyncStorage.getItem('user')
       if(userDT !== null) {
-        let ranNum = Math.floor(Math.random()*(5-1))
         let userData = JSON.parse(userDT)
-        let productData = await getProduct(productsData[ranNum], userData.userToken)
+        let productData = await getProduct(code, userData.userToken)
         let test = data.findIndex(product => product.id === productData.product.id)
         if( test < 0 ){
           let newProduct = {
@@ -54,15 +93,25 @@ const HomeScreen = ({navigation}) => {
           setData(d => [ ...d, newProduct])
           setTotal(d => d + newProduct.itemPrice)
         } else {
-          data[test].quantity += 1
-          data[test].itemPrice = parseFloat(data[test].itemPrice) + parseFloat(productData.product.price)
-          setTotal(d => d + parseFloat(productData.product.price))
+          if(codeEl === '0000'){
+            data[test].quantity += 1
+            data[test].itemPrice = parseFloat(data[test].itemPrice) + parseFloat(productData.product.price)
+            setTotal(d => d + parseFloat(productData.product.price))
+          }  
+          if(codeEl === '1000'){
+            data[test].quantity -= 1
+            data[test].itemPrice = parseFloat(data[test].itemPrice) - parseFloat(productData.product.price)
+            setTotal(d => d - parseFloat(productData.product.price))
+            if(data[test].quantity === 0){
+              data.splice(test,1)
+            }
+          }
         }
       }
     } catch(e) {
       // error reading value
     }
-    printBluetoothData()
+    // printBluetoothData()
     setIsFetching(false);
   }
 
@@ -82,7 +131,10 @@ const HomeScreen = ({navigation}) => {
       // error reading value
     }
   }
-  
+
+  React.useEffect(()=>{
+    insertProductInCart(code)
+  },[code])
   getData()
 
   const body = (
@@ -91,11 +143,6 @@ const HomeScreen = ({navigation}) => {
       <View style={[tw`mt-16 h-3/4`, bConnected ? tw`` : tw`justify-end self-center`]}>
         {bConnected ? 
         <View>
-          <View style={tw`p-5`}>
-            <TouchableOpacity onPress={()=>{insertProductInCart()}}>
-              <Text> Hola </Text>
-            </TouchableOpacity>
-          </View>
           <View>
             <FlatList
               data={data}
@@ -115,7 +162,7 @@ const HomeScreen = ({navigation}) => {
         }
         
       </View>
-      { bConnected ? 
+      { bConnected && total>0 ? 
       <View style={tw`h-8 flex-row justify-between px-10`}>
         <Text style={tw`font-bold text-lg`}> 
           Total:
@@ -128,9 +175,9 @@ const HomeScreen = ({navigation}) => {
       <View style={tw`h-8 flex-row justify-between px-10`}>
       </View>
       }
-      
+       
       <View style={[tw`w-full h-18 rounded-10 justify-center self-center`,bConnected ? [tw`border`,twr`border-stg`] : twr`bg-stg`]}>
-        { bConnected ?
+        { bConnected  ?
         <TouchableOpacity 
               onPress={()=>{navigation.navigate("PaymentScreen",{total:total, dataItems:data})}}
               style={tw`justify-center flex-row`}
@@ -145,7 +192,7 @@ const HomeScreen = ({navigation}) => {
         </TouchableOpacity>
         :
         <TouchableOpacity 
-              onPress={()=>navigation.navigate("QrScreen")}
+              onPress={()=>requestBluetoothPermision()}
               style={tw`justify-center self-center`}
               >
               <Icon
@@ -156,6 +203,7 @@ const HomeScreen = ({navigation}) => {
               />
         </TouchableOpacity>}
       </View>
+      
     </View>
   );
   const iosView = <SafeAreaView style={tw`bg-white h-full`}>{body}</SafeAreaView>;

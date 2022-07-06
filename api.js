@@ -1,5 +1,4 @@
-const api = "http://172.31.191.161:5000/api/";
-// const api = "http://192.168.3.10:5000/api/";
+const api = "https://storetg-api.herokuapp.com/api/";
 export const stripeKey = 'pk_test_51KxvwmL0mNx5gOqGgY6N9DtzurxYyvVS7qGUdRU76pRBnW5WUvrUO5nJzPIqNSYoQsfpCBM85I41GwNIfXk5V4dQ00YXwySM4l'
 
 export const getTasks = async () => {
@@ -11,7 +10,6 @@ export const getTasks = async () => {
   };
 
 export const authentication = async (user) => {
-  console.log("entramos",api + "auth/loginClient")
   const res = await fetch(api + "auth/loginClient", {
     method: "POST",
     headers: { Accept: "application/json", "Content-Type": "application/json" },
