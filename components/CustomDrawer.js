@@ -20,8 +20,8 @@ const CustomDrawer = (props) => {
             <View style={tw`p-5 items-center`}>
                 <View style={[tw`h-32 w-32 rounded-full border items-center justify-center`,twr`border-stg`]}>
                     <Image
-                    source={require('../assets/perfil.jpg')}
-                    style={tw`h-28 w-28 rounded-full `}
+                    source={require('../assets/IconoPerfil.png')}
+                    style={tw`h-38 w-38 rounded-full `}
                     />
                 </View>
                 <Text style={[tw`font-bold text-lg text-center pt-4`,twr`text-stg`]}>{name}</Text>

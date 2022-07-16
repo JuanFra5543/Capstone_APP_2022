@@ -35,8 +35,13 @@ const QrScreen = ({navigation}) => {
 
   const dispatch = useDispatch();
 
+  const [loading, setLoading]= React.useState(false)
+
   //Is a device connected?
   const [isConnected, setIsConnected] = React.useState(false);
+
+  //Is a device connected?
+  const [bluetoothName, setBluetoothName] = React.useState('');
 
   //What device is connected?
   const [connectedDevice, setConnectedDevice] = React.useState({});
@@ -146,7 +151,6 @@ const QrScreen = ({navigation}) => {
 
   const scanAndConnect = async () => {
     console.log('scanning');
-
     BLTManager.startDeviceScan(null, null, (error, scannedDevice) => {
 
       if (error) {
@@ -162,7 +166,9 @@ const QrScreen = ({navigation}) => {
 
     // stop scanning devices after 5 seconds
     setTimeout(() => {
+      console.log("Re trying scanning")
       BLTManager.stopDeviceScan();
+      setLoading(false)
     }, 5000);
   }
 
@@ -181,10 +187,19 @@ const QrScreen = ({navigation}) => {
 
   // What happens when we scan the bar code
   const handleBarCodeScanned = async ({ type, data }) => {
+    setLoading(true)
     dispatch(setNameBluetooth(data))
     dispatch(setConnected(true))
+    setBluetoothName(data)
     await scanAndConnect()
   };
+
+  const loadingFunction = () => {
+    setTimeout(() => {
+    }, 5000);
+  }
+
+  
 
   // Check permissions and return the screens
   if (hasPermission === null) {
@@ -211,13 +226,14 @@ const QrScreen = ({navigation}) => {
       <BackButton navigation={navigation} routes={"Inicio"} qrScreen={true}/>
       <View>
         <BarCodeScanner
-          onBarCodeScanned={handleBarCodeScanned}
+          onBarCodeScanned={loading ? loadingFunction : handleBarCodeScanned}
           style={tw`h-full`}
         />
       </View>
     </View>
   );
-  return body;
+  const andView = <View style={tw``}>{body}</View>;
+  return Platform.OS === 'ios' ? body : andView;
 };
 
 export default QrScreen;

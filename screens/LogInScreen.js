@@ -8,8 +8,8 @@ import {
   Platform,
 } from "react-native";
 import React from "react";
-// import tw from 'twrnc';
-import tw from "../helpers/tailwind";
+import tw from 'twrnc';
+import twr from "../helpers/tailwind";
 import { Icon } from "react-native-elements";
 
 import { AuthContext } from "../components/context";
@@ -44,31 +44,38 @@ const LogInScreen = ({navigation}) => {
     signIn(username, password);
   };
   const body = (
-    <View style={tw`px-5`}>
+    <View style={twr`px-5`}>
+      <View style={tw`-mt-4`}>
+          <Image
+              style={tw`w-52 h-52 m-auto`}
+              source={{
+              uri: "https://firebasestorage.googleapis.com/v0/b/storetogo-97e2a.appspot.com/o/logo%2FLogo.png?alt=media&token=bec72064-6014-479e-9b8c-9d4526f9a3fc"
+              }}/>
+        </View>
       <View style={tw`px-8`}>
-        <Text style={tw`my-4`}>Email</Text>
+        <Text style={twr`my-4`}>Email</Text>
         <View
           style={[
-            tw`border-2 border-stg bg-white rounded px-2 flex-row shadow-lg`,
-            Platform.OS === "ios" ? tw`py-2` : tw`py-1`,
+            twr`border-2 border-stg bg-white rounded px-2 flex-row shadow-lg`,
+            Platform.OS === "ios" ? twr`py-2` : twr`py-1`,
           ]}
         >
           <TextInput
-            style={tw`w-full`}
+            style={twr`w-full`}
             autoCapitalize="none"
             placeholder="Email"
             onChangeText={(value) => textInputChance(value)}
           />
         </View>
-        <Text style={tw`my-4`}>Password</Text>
+        <Text style={twr`my-4`}>Password</Text>
         <View
           style={[
-            tw`border-2 border-stg  bg-white rounded py-1 px-2 flex-row items-center shadow-lg`,
-            Platform.OS === "ios" ? tw`py-2` : tw`py-1`,
+            twr`border-2 border-stg  bg-white rounded py-1 px-2 flex-row items-center shadow-lg`,
+            Platform.OS === "ios" ? twr`py-2` : twr`py-1`,
           ]}
         >
           <TextInput
-            style={tw`grow w-3/4`}
+            style={twr`grow w-3/4`}
             secureTextEntry={data.secureTextEntry}
             placeholder="Password"
             onChangeText={(value) => handlePasswordChange(value)}
@@ -83,32 +90,32 @@ const LogInScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={tw`p-8 items-center`}>
+      <View style={twr`p-8 items-center`}>
         <TouchableOpacity
           onPress={() => {
             logInHandle(data.email, data.password);
           }}
         >
-          <View style={tw`bg-stg rounded-lg w-32 p-2 shadow-xl`}>
-            <Text style={tw`text-white text-center text-lg`}>Login</Text>
+          <View style={twr`bg-stg rounded-lg w-32 p-2 shadow-xl`}>
+            <Text style={twr`text-white text-center text-lg`}>Login</Text>
           </View>
         </TouchableOpacity>
       </View>
-      <View style={tw`px-8 items-center`}>
+      <View style={twr`px-8 items-center`}>
         <Text>No tienes cuenta?</Text>
         <TouchableOpacity onPress={() => {navigation.navigate('RegisterScreen')}} >
-            <Text style={tw`text-stg`}>Registrate Aqui</Text>
+            <Text style={twr`text-stg`}>Registrate Aqui</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
   const iosView = (
-    <SafeAreaView style={tw`bg-white h-full items-center justify-center`}>
+    <SafeAreaView style={twr`bg-white h-full items-center justify-center`}>
       {body}
     </SafeAreaView>
   );
   const andView = (
-    <View style={tw`bg-white h-full pt-10 items-center justify-center`}>
+    <View style={twr`bg-white h-full pt-10 items-center justify-center`}>
       {body}
     </View>
   );

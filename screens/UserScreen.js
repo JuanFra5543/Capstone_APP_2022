@@ -22,7 +22,7 @@ const UserScreen = ({navigation}) => {
       <View style={tw`mt-16 py-8 items-center justify-center`}>
         <View style={tw`items-center`}>
             <Image
-              source={require('../assets/perfil.jpg')}
+              source={require('../assets/IconoPerfil.png')}
               style={tw`h-36 w-36 rounded-full `}
             />
           <Text style={[tw`font-bold text-xl text-center p-5 `,twr`text-stg`]}>{name}</Text>
