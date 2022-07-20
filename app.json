@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Store to Go",
-    "slug": "Capstone_APP_2022",
-    "version": "1.0.0",
+    "name": "storetogo",
+    "slug": "storetogo",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -22,10 +22,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.capstone.storetogo"
+      "package": "com.storetogo.storetogo"
     },
     "web": {
       "favicon": "./assets/favicon.png"

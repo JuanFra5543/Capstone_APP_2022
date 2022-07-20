@@ -17,6 +17,7 @@ import ItemContainer from '../components/ItemContainer';
 const HomeScreen = ({navigation}) => {
 
   const [isFetching, setIsFetching] = React.useState(false);
+  const [disabled, setDisabled] = React.useState(true);
   const [total, setTotal] = React.useState(0);
 
   const [data,setData] = React.useState([])
@@ -64,10 +65,6 @@ const HomeScreen = ({navigation}) => {
       console.warn(err);
     }
     navigation.navigate("QrScreen")
-  }
-
-  const printBluetoothData = () => {
-    console.log(bName,bConnected)
   }
 
   const insertProductInCart = async (message) => {
@@ -135,6 +132,13 @@ const HomeScreen = ({navigation}) => {
   React.useEffect(()=>{
     insertProductInCart(code)
   },[code])
+  React.useEffect(()=>{
+    if(data.length>0){
+      setDisabled(false)
+    } else{
+      setDisabled(true)
+    }
+  },)
   getData()
 
   const body = (
@@ -178,7 +182,8 @@ const HomeScreen = ({navigation}) => {
        
       <View style={[tw`w-full h-18 rounded-10 justify-center self-center`,bConnected ? [tw`border`,twr`border-stg`] : twr`bg-stg`]}>
         { bConnected  ?
-        <TouchableOpacity 
+        <TouchableOpacity
+              disabled={disabled}
               onPress={()=>{navigation.navigate("PaymentScreen",{total:total, dataItems:data})}}
               style={tw`justify-center flex-row`}
               >

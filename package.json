@@ -1,6 +1,6 @@
 {
-  "name": "capstone_app_2022",
-  "version": "1.0.0",
+  "name": "storetogo",
+  "version": "2.0.0",
   "scripts": {
     "start": "expo start --dev-client",
     "android": "expo run:android",
